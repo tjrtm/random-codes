@@ -1,0 +1,80 @@
+# Can Minor Prompt Modifications Affect LLM Responses?
+
+A frequently discussed topic is whether small textual changes (such as adding or removing certain punctuation marks or altering spacing) can substantially change the output of Large Language Models (LLMs). Below is an overview of why minimal adjustments in prompts can lead to unexpected answers and whether there is a formal proof of this sensitivity.
+
+---
+
+## 1. Prompt Sensitivity in LLMs
+
+LLMs are *highly sensitive* to the format and style of the input text. This sensitivity implies that slight modifications to the prompt—like the inclusion or exclusion of punctuation marks—may alter how the model interprets the question and generates a response. Depending on context and model architecture, these variations might yield:
+
+- Different levels of detail or specificity in the answer  
+- Shifts in tone or style  
+- Occasional factual inconsistencies or errors  
+
+However, there is no *absolute rule* that any given punctuation-related change will invariably produce a wrong answer.
+
+---
+
+## 2. Reasons Behind the Phenomenon
+
+1. **Tokenization Shifts**  
+   Text is broken into discrete tokens during preprocessing. Introducing or removing small textual elements can slightly change how the model parses the prompt, which can lead to differences in its internal reasoning.
+
+2. **Contextual Cues**  
+   LLMs rely on context windows that capture and interpret surrounding words. Even minor punctuation or spacing adjustments can cause the model to assign different importance or relationships between tokens.
+
+3. **Overfitting to Observed Patterns**  
+   During training, LLMs learn from billions of text samples, which include specific punctuation usage, unusual capitalizations, and other stylistic quirks. Tiny changes might align or misalign the query with certain patterns the model “remembers,” thus changing the response.
+
+4. **Probabilistic Text Generation**  
+   When generating text, LLMs utilize probability distributions over possible next tokens. Even a slight change in the prompt can nudge the distribution so that different words become more likely, sometimes leading to stark differences.
+
+5. **Adversarial or Non-Adversarial Perturbations**  
+   Research has identified “adversarial triggers”—brief fragments of text crafted to induce peculiar responses. Though small textual changes in everyday use might not be deliberately adversarial, they nonetheless illustrate how minimal modifications can shift model behavior.
+
+---
+
+## 3. Is There a Formal Proof?
+
+- **Lack of a Uniform Mathematical Proof**  
+  Currently, there is no *universally accepted, formal proof* stating that any specific small prompt variation will consistently cause incorrect responses. Much of the evidence is anecdotal or arises from isolated experiments.
+
+- **Empirical Observations**  
+  Users and researchers alike have documented instances where minimal changes in a prompt can result in dramatically different outputs. However, these cases do not show a guaranteed outcome—they vary based on the nature of the question and the model’s training.
+
+- **Adversarial NLP Studies**  
+  Research into adversarial attacks has shown that carefully chosen textual alterations can compromise performance. Even so, these studies typically involve more complex modifications than just simple punctuation marks; no single universal trick is proven to fail the model every time.
+
+In conclusion, while LLMs are evidently susceptible to minor prompt modifications, there is no definitive proof that such tweaks *universally* produce wrong answers.
+
+---
+
+## 4. Summary
+
+1. **LLMs Are Vulnerable to Small Changes**  
+   Slight textual modifications can lead to differing outputs, highlighting the importance of prompt engineering.
+
+2. **No Guaranteed Breakdown**  
+   A minimal textual change alone does not ensure an incorrect answer; it merely raises the likelihood of unexpected results.
+
+3. **Empirical, Not Mathematical**  
+   Existing findings are largely based on practical experimentation and user anecdotes, rather than a formal theorem.
+
+4. **Area of Ongoing Research**  
+   The broader phenomenon of NLP model sensitivity to prompt variations continues to be studied, especially for safety and reliability purposes.
+
+---
+
+## List of Sources
+
+1. Wallace, E., Feng, S., Kandpal, N., Gardner, M., & Singh, S. (2019). [*Universal Adversarial Triggers for NLP*](https://arxiv.org/abs/1908.07125). *Empirical Methods in Natural Language Processing (EMNLP).*  
+2. Zhou, K., Qiu, M., Li, G., & Tang, J. (2021). [*Adversarial Attacks on Deep Learning-based Recommender Systems: A Survey*](https://arxiv.org/abs/2107.12559). *arXiv preprint arXiv:2107.12559.*
+
+---
+
+## List of Abbreviations
+
+- **LLM**: Large Language Model  
+- **NLP**: Natural Language Processing  
+- **EMNLP**: Empirical Methods in Natural Language Processing

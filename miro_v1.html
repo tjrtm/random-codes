@@ -1,0 +1,302 @@
+<html>
+<head>
+<title>Simple Whiteboard</title>
+<style>
+#container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: auto; /* Allows scrolling if content exceeds viewport */
+}
+#svg {
+    width: 100%;
+    height: 100%;
+    background: #f5f5f5; /* Light background for visibility */
+}
+#toolbar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1; /* Ensures toolbar is above SVG */
+}
+button {
+    margin: 0 5px;
+    padding: 5px 10px;
+}
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="toolbar">
+        <button onclick="setTool('select')">Select</button>
+        <button onclick="setTool('rectangle')">Rectangle</button>
+        <button onclick="setTool('circle')">Circle</button>
+        <button onclick="setTool('line')">Line</button>
+        <button onclick="setTool('text')">Text</button>
+        <button onclick="setTool('connect')">Connect</button>
+    </div>
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+        <g id="connections"></g>
+        <g id="shapes"></g>
+    </svg>
+</div>
+<script>
+// Tool definitions
+const TOOLS = {
+    SELECT: 'select',
+    RECTANGLE: 'rectangle',
+    CIRCLE: 'circle',
+    LINE: 'line',
+    TEXT: 'text',
+    CONNECT: 'connect'
+};
+
+// State variables
+let currentTool = TOOLS.SELECT;
+let isDrawing = false;
+let isMoving = false;
+let selectedShape = null;
+let currentShape = null;
+let firstShape = null;
+let startX, startY;
+let connections = [];
+
+// DOM elements
+let svg = document.getElementById('svg');
+let shapesGroup = document.getElementById('shapes');
+let connectionsGroup = document.getElementById('connections');
+
+// Event listeners
+svg.addEventListener('mousedown', handleMouseDown);
+svg.addEventListener('mousemove', handleMouseMove);
+svg.addEventListener('mouseup', handleMouseUp);
+
+// Set the current tool
+function setTool(tool) {
+    currentTool = tool;
+}
+
+// Convert screen coordinates to SVG coordinates
+function getMousePosition(event) {
+    let CTM = svg.getScreenCTM();
+    if (CTM) {
+        let point = svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+        let svgPoint = point.matrixTransform(CTM.inverse());
+        return { x: svgPoint.x, y: svgPoint.y };
+    }
+}
+
+// Shape creation functions
+function createRectangle(x, y, width, height) {
+    let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', width);
+    rect.setAttribute('height', height);
+    rect.setAttribute('fill', 'none');
+    rect.setAttribute('stroke', 'black');
+    return rect;
+}
+
+function createCircle(cx, cy, r) {
+    let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', 'black');
+    return circle;
+}
+
+function createLine(x1, y1, x2, y2) {
+    let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke', 'black');
+    return line;
+}
+
+function createText(x, y, text) {
+    let textElem = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textElem.setAttribute('x', x);
+    textElem.setAttribute('y', y);
+    textElem.textContent = text;
+    return textElem;
+}
+
+// Calculate the center point of a shape
+function getCenter(shape) {
+    if (shape.tagName === 'rect') {
+        let x = parseFloat(shape.getAttribute('x'));
+        let y = parseFloat(shape.getAttribute('y'));
+        let width = parseFloat(shape.getAttribute('width'));
+        let height = parseFloat(shape.getAttribute('height'));
+        return { x: x + width / 2, y: y + height / 2 };
+    } else if (shape.tagName === 'circle') {
+        let cx = parseFloat(shape.getAttribute('cx'));
+        let cy = parseFloat(shape.getAttribute('cy'));
+        return { x: cx, y: cy };
+    } else if (shape.tagName === 'line') {
+        let x1 = parseFloat(shape.getAttribute('x1'));
+        let y1 = parseFloat(shape.getAttribute('y1'));
+        let x2 = parseFloat(shape.getAttribute('x2'));
+        let y2 = parseFloat(shape.getAttribute('y2'));
+        return { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+    } else if (shape.tagName === 'text') {
+        let x = parseFloat(shape.getAttribute('x'));
+        let y = parseFloat(shape.getAttribute('y'));
+        return { x: x, y: y };
+    }
+}
+
+// Move a shape by dx, dy
+function moveShape(shape, dx, dy) {
+    if (shape.tagName === 'rect') {
+        let x = parseFloat(shape.getAttribute('x')) + dx;
+        let y = parseFloat(shape.getAttribute('y')) + dy;
+        shape.setAttribute('x', x);
+        shape.setAttribute('y', y);
+    } else if (shape.tagName === 'circle') {
+        let cx = parseFloat(shape.getAttribute('cx')) + dx;
+        let cy = parseFloat(shape.getAttribute('cy')) + dy;
+        shape.setAttribute('cx', cx);
+        shape.setAttribute('cy', cy);
+    } else if (shape.tagName === 'line') {
+        let x1 = parseFloat(shape.getAttribute('x1')) + dx;
+        let y1 = parseFloat(shape.getAttribute('y1')) + dy;
+        let x2 = parseFloat(shape.getAttribute('x2')) + dx;
+        let y2 = parseFloat(shape.getAttribute('y2')) + dy;
+        shape.setAttribute('x1', x1);
+        shape.setAttribute('y1', y1);
+        shape.setAttribute('x2', x2);
+        shape.setAttribute('y2', y2);
+    } else if (shape.tagName === 'text') {
+        let x = parseFloat(shape.getAttribute('x')) + dx;
+        let y = parseFloat(shape.getAttribute('y')) + dy;
+        shape.setAttribute('x', x);
+        shape.setAttribute('y', y);
+    }
+}
+
+// Update connection lines when a shape moves
+function updateConnections(shape) {
+    connections.forEach(conn => {
+        if (conn.shape1 === shape) {
+            let center = getCenter(conn.shape1);
+            conn.line.setAttribute('x1', center.x);
+            conn.line.setAttribute('y1', center.y);
+        } else if (conn.shape2 === shape) {
+            let center = getCenter(conn.shape2);
+            conn.line.setAttribute('x2', center.x);
+            conn.line.setAttribute('y2', center.y);
+        }
+    });
+}
+
+// Create a connection line between two shapes
+function createConnection(shape1, shape2) {
+    let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    let center1 = getCenter(shape1);
+    let center2 = getCenter(shape2);
+    line.setAttribute('x1', center1.x);
+    line.setAttribute('y1', center1.y);
+    line.setAttribute('x2', center2.x);
+    line.setAttribute('y2', center2.y);
+    line.setAttribute('stroke', 'black');
+    connectionsGroup.appendChild(line);
+    connections.push({ line: line, shape1: shape1, shape2: shape2 });
+}
+
+// Handle mouse down events
+function handleMouseDown(event) {
+    let pos = getMousePosition(event);
+    startX = pos.x;
+    startY = pos.y;
+    if (currentTool === TOOLS.SELECT) {
+        if (event.target !== svg) {
+            selectedShape = event.target;
+            isMoving = true;
+        }
+    } else if (currentTool === TOOLS.CONNECT) {
+        if (event.target !== svg) {
+            if (!firstShape) {
+                firstShape = event.target;
+            } else {
+                createConnection(firstShape, event.target);
+                firstShape = null;
+            }
+        }
+    } else if (event.target === svg) {
+        isDrawing = true;
+        if (currentTool === TOOLS.RECTANGLE) {
+            currentShape = createRectangle(startX, startY, 0, 0);
+        } else if (currentTool === TOOLS.CIRCLE) {
+            currentShape = createCircle(startX, startY, 0);
+        } else if (currentTool === TOOLS.LINE) {
+            currentShape = createLine(startX, startY, startX, startY);
+        } else if (currentTool === TOOLS.TEXT) {
+            let textContent = prompt("Enter text:");
+            if (textContent) {
+                currentShape = createText(startX, startY, textContent);
+                shapesGroup.appendChild(currentShape);
+            }
+            isDrawing = false;
+        }
+        if (isDrawing) {
+            shapesGroup.appendChild(currentShape);
+        }
+    }
+}
+
+// Handle mouse move events
+function handleMouseMove(event) {
+    if (!isDrawing && !isMoving) return;
+    let pos = getMousePosition(event);
+    let currentX = pos.x;
+    let currentY = pos.y;
+    if (isDrawing) {
+        if (currentTool === TOOLS.RECTANGLE) {
+            let x = Math.min(startX, currentX);
+            let y = Math.min(startY, currentY);
+            let width = Math.abs(currentX - startX);
+            let height = Math.abs(currentY - startY);
+            currentShape.setAttribute('x', x);
+            currentShape.setAttribute('y', y);
+            currentShape.setAttribute('width', width);
+            currentShape.setAttribute('height', height);
+        } else if (currentTool === TOOLS.CIRCLE) {
+            let dx = currentX - startX;
+            let dy = currentY - startY;
+            let radius = Math.sqrt(dx * dx + dy * dy);
+            currentShape.setAttribute('r', radius);
+        } else if (currentTool === TOOLS.LINE) {
+            currentShape.setAttribute('x2', currentX);
+            currentShape.setAttribute('y2', currentY);
+        }
+    } else if (isMoving && selectedShape) {
+        let dx = currentX - startX;
+        let dy = currentY - startY;
+        startX = currentX;
+        startY = currentY;
+        moveShape(selectedShape, dx, dy);
+        updateConnections(selectedShape);
+    }
+}
+
+// Handle mouse up events
+function handleMouseUp(event) {
+    if (isDrawing) {
+        isDrawing = false;
+        currentShape = null;
+    } else if (isMoving) {
+        isMoving = false;
+        selectedShape = null;
+    }
+}
+</script>
+</body>
+</html>

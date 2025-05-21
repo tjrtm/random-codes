@@ -1,0 +1,113 @@
+f### Key Points
+- Research suggests you can build a prototype for job ad creation and checks using custom AI assistants and chat completion APIs.
+- It seems likely that publishing automation is not feasible with these tools alone, requiring manual steps.
+- The evidence leans toward focusing the prototype on creation, language checks, and DEI compliance, with human review included.
+
+---
+
+### Direct Answer
+
+Yes, you can build a prototype for automating the talent acquisition job ad creation and publishing process using only custom assistants with custom instructions and API calls to chat completion, but with some limitations.
+
+**What You Can Do:**
+- Use AI to generate job descriptions by providing detailed prompts, like asking for a description based on job title and responsibilities.
+- Automate language and wording checks by having the AI review the text for clarity and grammar, and perform basic DEI compliance checks by identifying potentially biased language.
+- Include a human review step, where the refined job ad is presented for approval or edits, which fits well within your constraints.
+
+**What You Can't Do:**
+- Automating the publishing step is challenging with only chat completion APIs, as these tools are designed for text generation, not for interacting with job boards or making API calls to external services. You'll likely need to manually copy and paste the final job ad into publishing platforms.
+
+**How to Proceed:**
+- Start by experimenting with chat completion API calls to create job ads and refine them with prompts for language and DEI checks. Test with sample job postings and gather feedback from reviewers to improve the process.
+- For now, treat publishing as a manual step in your prototype, outputting the final description ready for you to post. This approach still demonstrates significant automation while staying within your toolset.
+
+---
+
+---
+
+### Survey Note: Building a Prototype for AI-Driven Talent Acquisition Job Ad Automation with Limited Tools
+
+This note provides a comprehensive analysis of whether you can build a prototype for automating the talent acquisition job ad creation and publishing process using only custom assistants with custom instructions and API calls to chat completion, without third-party tools or software. The current date is Wednesday, May 21, 2025, and we’ll explore the feasibility, limitations, and steps for implementation, ensuring a thorough and scalable solution.
+
+#### Introduction
+Automating the creation and publishing of job advertisements using AI agents can enhance efficiency in talent acquisition, particularly for processes involving multiple steps like drafting, language checks, DEI compliance, human review, and publishing. Given your constraints—limited to custom assistants with custom instructions and API calls to chat completion (e.g., models like ChatGPT)—this note outlines whether a prototype is feasible, focusing on the creation, checking, and review steps, with publishing likely requiring manual intervention.
+
+#### Feasibility Analysis
+To determine if you can build a prototype, let’s break down the process into its components and assess what can be achieved with the given tools.
+
+1. **Understanding the Process**:
+   - The process includes creating the job ad text, checking language/wording/DEI compliance, human review, and publishing, with an implied fifth step possibly being final approval or another check.
+   - Your tools are limited to custom assistants (AI models accessed via chat completion APIs) and custom instructions, meaning you can generate text and refine it through prompts, but cannot use specialized third-party platforms like Textio or JOIN.
+
+2. **Step-by-Step Feasibility**:
+   - **Job Ad Creation (Step 1)**:
+     - This is fully feasible with chat completion API calls. You can use the AI to generate job descriptions by providing detailed prompts. For example:
+       - Prompt: "Generate a job description for a [job title] position at [company name]. Include [responsibilities] and [requirements]. Make it engaging and professional."
+     - Research, such as the article "How to Use ChatGPT to Write Job Ads | SocialTalent" ([How to Use ChatGPT to Write Job Ads | SocialTalent](https://www.socialtalent.com/blog/recruiting/how-to-use-chatgpt-to-write-job-ads)), confirms that chat completion models like ChatGPT are effective for this purpose, offering step-by-step guidance on prompts like emphasizing company culture or required skills.
+
+   - **Language/Wording and DEI Checks (Step 2)**:
+     - Language and wording checks can be partially automated. You can use the chat completion model to review the text for clarity, grammar, and tone. For example:
+       - Prompt: "Review the following job description for clarity, grammar, and tone. Suggest improvements: [job description]."
+     - For DEI compliance, it’s more challenging, as general chat completion models lack the specialized training of tools like Textio. However, you can attempt to address it with prompts like:
+       - Prompt: "Check this job description for any language that might be exclusionary or biased, particularly regarding gender, race, or other protected characteristics. Suggest alternatives: [job description]."
+     - While not as effective as specialized tools, as noted in "AI-generated job ads: Insights from analyzing 1,439 job ads" ([AI-generated job ads: Insights from analyzing 1,439 job ads](https://developdiverse.com/blog/chatgpt)), which warns about potential biases in AI-generated content, this can still provide a basic level of DEI review for a prototype.
+
+   - **Human Review (Step 3)**:
+     - This step is inherently manual and does not require AI automation. The system can simply present the refined job description to a human reviewer for approval or further edits, fitting well within your constraints.
+
+   - **Publishing (Step 4)**:
+     - Automating publishing is not feasible with only chat completion API calls. Publishing typically involves integrating with job boards or platforms (e.g., LinkedIn, Indeed), which requires API access or direct interaction with their systems, such as authentication and specific data formats.
+     - Chat completion models are designed for text generation, not for executing actions like making API calls to external services or filling out web forms. While you could theoretically use the model to generate scripts or code for publishing, executing those scripts would require additional infrastructure or tools, which you do not have access to.
+     - Therefore, for the prototype, publishing would need to remain a manual step, where the final job description is copied and pasted into the desired job posting platforms.
+
+   - **Implied Fifth Step**:
+     - If there is an additional step (e.g., final approval or formatting), it can likely be handled within the creation and review steps already outlined, using similar prompting techniques.
+
+3. **Prototype Scope and Limitations**:
+   - Given the constraints, you can build a prototype that automates:
+     - Job ad creation (Step 1)
+     - Basic language/wording checks (Step 2)
+     - DEI compliance checks (Step 2, with limitations)
+     - Human review (Step 3)
+   - The publishing step (Step 4) would need to be manual, but the prototype can output the final job description in a format ready for publishing, such as a clean text output that can be easily copied and pasted.
+   - This approach still demonstrates significant automation of the process, focusing on preparation rather than distribution, and adheres to your toolset.
+
+#### Detailed Implementation Plan
+To build the prototype, follow these steps:
+
+1. **Design the Workflow**:
+   - Use a custom assistant with custom instructions to guide the process. Structure it as follows:
+     - Start with Step 1: Use chat completion to generate the initial job description based on user-provided inputs (e.g., job title, responsibilities, requirements).
+     - Move to Step 2: Use additional prompts to refine the description for language, wording, and DEI compliance, iterating as needed.
+     - Present the refined description to a human for review (Step 3).
+     - Output the final description for manual publishing (Step 4).
+   - Ensure the workflow is stateful, passing outputs from one step to the next, which can be managed through your custom instructions.
+
+2. **Custom Instructions and Prompts**:
+   - Define clear prompts for each step. Examples include:
+     - "Generate a job description for [job details]."
+     - "Review this job description for clarity, grammar, and tone. Suggest improvements."
+     - "Check this job description for any language that might be exclusionary or biased. Suggest alternatives."
+   - Refine prompts based on initial outputs to improve accuracy and relevance, such as asking for more creativity or specific keywords if the output is generic.
+
+3. **Testing and Iteration**:
+   - Test the prototype with at least 5-10 sample job postings to ensure the AI-generated content meets basic standards for clarity, professionalism, and inclusivity.
+   - Gather feedback from human reviewers to identify areas for improvement, such as refining prompts for DEI checks or adjusting the review interface (if applicable).
+   - Monitor performance metrics like edit rates and successful generations to refine the system over time.
+
+4. **Addressing Limitations**:
+   - **DEI Compliance**: Note that a general chat completion model may not be as effective as specialized tools for ensuring inclusivity. Document this limitation and consider it an area for future improvement when additional tools become available.
+   - **Publishing**: Since publishing cannot be automated, ensure the prototype outputs the final description in a user-friendly format, such as plain text or a structured document, to facilitate manual posting.
+   - **Scalability**: The prototype will be limited by the capabilities of the chat completion model, particularly for complex job descriptions or high volumes. Plan for manual intervention for edge cases.
+
+#### Considerations and Challenges
+- **Accuracy of AI-Generated Content**: AI may not always produce perfect drafts, so human review is essential. Use high-quality prompts and update them regularly based on feedback to improve accuracy.
+- **Ethics and Bias**: Ensure all AI-generated content, especially for DEI checks, is fair and unbiased. Regularly audit the system to prevent introducing new biases, as highlighted in "AI-generated job ads: Insights from analyzing 1,439 job ads" ([AI-generated job ads: Insights from analyzing 1,439 job ads](https://developdiverse.com/blog/chatgpt)).
+- **User Experience**: Design the process to be intuitive for human reviewers, possibly through a simple interface where they can see AI suggestions and make adjustments, though this might require additional setup beyond chat completion.
+
+#### Conclusion
+You can build a prototype for the talent acquisition job ad creation and publishing process automation using only custom assistants with custom instructions and API calls to chat completion. The prototype can automate job ad creation, basic language/wording checks, and DEI compliance, with human review incorporated. However, the publishing step will need to remain manual due to the limitations of chat completion models. This approach provides a valuable demonstration of automation while adhering to your constraints, with room for expansion when additional tools or frameworks become available.
+
+#### Key Citations
+- [How to Use ChatGPT to Write Job Ads | SocialTalent](https://www.socialtalent.com/blog/recruiting/how-to-use-chatgpt-to-write-job-ads)
+- [AI-generated job ads: Insights from analyzing 1,439 job ads](https://developdiverse.com/blog/chatgpt)
